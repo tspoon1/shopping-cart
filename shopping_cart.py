@@ -25,7 +25,27 @@ products = [
     {"id":20, "name": "Pomegranate Cranberry & Aloe Vera Enrich Drink", "department": "beverages", "aisle": "juice nectars", "price": 4.25}
 ] # based on data from Instacart: https://www.instacart.com/datasets/grocery-shopping-2017
 
-print(products)
+#print(products)
 # pprint(products)
 
 # TODO: write some Python code here to produce the desired output
+
+#####################################################################
+#  Initial message to the user  #
+#####################################################################
+
+print()
+print("Hello! Welcome to Tim's Grocery Store!")
+print()
+print("-------------------------------------------")
+print("The following items are available for purchase to today:")
+print("-------------------------------------------")
+
+for p in products:
+    print(" + " + str(p["id"]) + " " + p["name"] + )
+
+shopping_list = []
+
+print()
+item = input("Please enter the product identifier number that you would like to purchase today:")
+
