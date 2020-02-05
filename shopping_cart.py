@@ -100,5 +100,17 @@ for i in shopping_list:
         if i == p["id"]:
             checkout_list.append(p)
 
+subtotal = 0.0
 for p in checkout_list:
     print(" ... " + p["name"] + " (" + to_usd(p["price"]) + ")")
+    subtotal = subtotal + float(p["price"])
+
+tax = subtotal * .0875
+
+print("-------------------------------------------")
+print("SUBTOTAL: " + to_usd(subtotal))
+print("TAX: " + to_usd(tax))
+print("TOTAL: " + to_usd(subtotal + tax))
+print("-------------------------------------------")
+print("THANKS, SEE YOU AGAIN SOON!")
+print("-------------------------------------------")
