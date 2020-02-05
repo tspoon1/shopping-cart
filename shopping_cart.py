@@ -1,6 +1,7 @@
 # shopping_cart.py
-
+from datetime import datetime
 #from pprint import pprint
+
 
 products = [
     {"id":1, "name": "Chocolate Sandwich Cookies", "department": "snacks", "aisle": "cookies cakes", "price": 3.50},
@@ -30,6 +31,10 @@ products = [
 
 # TODO: write some Python code here to produce the desired output
 
+#adapted from prof-rossetti (intended for groceries exercise)
+def to_usd(my_price):
+    return f"${my_price:,.2f}"
+
 #####################################################################
 #  Initial message to the user  #
 #####################################################################
@@ -41,11 +46,59 @@ print("-------------------------------------------")
 print("The following items are available for purchase to today:")
 print("-------------------------------------------")
 
-for p in products:
-    print(" + " + str(p["id"]) + " " + p["name"] + )
-
 shopping_list = []
+valid_ids = []
+
+for p in products:
+
+    #printing each product for each user to see
+    print(" + " + str(p["id"]) + " " + p["name"] + " (" + to_usd(p["price"]) + ")")
+
+    #gathering the vaid id values to use this for loop efficiently
+    valid_ids.append(int(p["id"]))
 
 print()
-item = input("Please enter the product identifier number that you would like to purchase today:")
+user_input = "" #using in order to not not copmare ints to strings when casting later on
 
+
+####### Will execute until the user has inputted 'DONE' #######
+
+while user_input != "DONE":
+    
+    item_id = input("Please enter the product identifier number that you would like to purchase today:")
+
+    #will keep running until user enters valid id or DONE
+    if item_id != "DONE":
+        while int(item_id) not in valid_ids:
+            item_id = input("I'm sorry! I don't think that product id is valid. Could you please try again?")
+            if item_id == "DONE":
+                break
+
+    #if the user entered DONE following a wrong id, this would break the loop
+    if item_id != "DONE":
+        shopping_list.append(int(item_id))
+
+    user_input = item_id
+
+
+####### Generating reciept output #######
+
+# line 90 datetime formatting adapted from
+# https://stackoverflow.com/questions/415511/how-to-get-the-current-time-in-python
+
+print("-------------------------------------------")
+print("Tim's Grocery Store")
+print("WWW.TimsGroceryStore.COM")
+print("-------------------------------------------")
+print("CHECKOUT AT: " + str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+print("-------------------------------------------")
+print("SELECTED PRODUCTS:")
+
+checkout_list = []
+for i in shopping_list:
+    for p in products:
+        if i == p["id"]:
+            checkout_list.append(p)
+
+for p in checkout_list:
+    print(" ... " + p["name"] + " (" + to_usd(p["price"]) + ")")
