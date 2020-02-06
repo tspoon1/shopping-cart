@@ -1,6 +1,10 @@
 # shopping_cart.py
+import os
+from dotenv import load_dotenv
 from datetime import datetime
 #from pprint import pprint
+
+load_dotenv()
 
 
 products = [
@@ -105,7 +109,8 @@ for p in checkout_list:
     print(" ... " + p["name"] + " (" + to_usd(p["price"]) + ")")
     subtotal = subtotal + float(p["price"])
 
-tax = subtotal * .0875
+tax_rate_env = float(os.environ.get("TAX_RATE"))
+tax = subtotal * tax_rate_env
 
 print("-------------------------------------------")
 print("SUBTOTAL: " + to_usd(subtotal))
