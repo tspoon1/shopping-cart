@@ -13,22 +13,23 @@ print("CLIENT:", type(client))
 
 subject = "Your Receipt from the Green Grocery Store"
 
-html_content = "Hello World"
+#html_content = "Hello World"
 #
 # or maybe ...
-#html_content = "Hello <strong>World</strong>"
-#
-# or maybe ...
-#html_list_items = "<li>You ordered: Product 1</li>"
-#html_list_items += "<li>You ordered: Product 2</li>"
-#html_list_items += "<li>You ordered: Product 3</li>"
-#html_content = f"""
-#<h3>Hello this is your receipt</h3>
-#<p>Date: ____________</p>
-#<ol>
-#    {html_list_items}
-#</ol>
-#"""
+
+html_content = "Hello <strong>World</strong>"
+
+html_list_items = "<li>You ordered: Product 1</li>"
+html_list_items += "<li>You ordered: Product 2</li>"
+html_list_items += "<li>You ordered: Product 3</li>"
+html_content = f"""
+<h3>Hello this is your receipt</h3>
+<p>Date: ____________</p>
+<ol>
+    {html_list_items}
+</ol>
+"""
+
 print("HTML:", html_content)
 
 message = Mail(from_email=MY_ADDRESS, to_emails=MY_ADDRESS, subject=subject, html_content=html_content)
