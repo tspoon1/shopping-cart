@@ -106,12 +106,14 @@ print("-------------------------------------------")
 print("Ready to check you out!")
 print("Would you like your reciept via email or printed below?")
 
-user_email = input("If you would like it via email, enter your email. Otherwise, press anything to continue!")
+user_email = input("If you would like it via email, enter your email. Otherwise, press anything to continue! ")
 
 #if there is an @ sign in the input, I am going to assume they entered a valid email address
 if "@" in user_email:
     
     #####################################
+    RECIP_EMAIL = user_email
+
     SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY", "OOPS, please set env var called 'SENDGRID_API_KEY'")
     MY_ADDRESS = os.environ.get("MY_EMAIL_ADDRESS", "OOPS, please set env var called 'MY_EMAIL_ADDRESS'")
 
@@ -152,18 +154,14 @@ if "@" in user_email:
     <h4>Total: {to_usd(subtotal + tax)}</h4>
     """
 
-    message = Mail(from_email=MY_ADDRESS, to_emails=MY_ADDRESS, subject=subject, html_content=html_content)
+    message = Mail(from_email=MY_ADDRESS, to_emails=RECIP_EMAIL, subject=subject, html_content=html_content)
 
     try:
         response = client.send(message)
-
-        print("RESPONSE:", type(response)) #> <class 'python_http_client.client.Response'>
-        print(response.status_code) #> 202 indicates SUCCESS
-        print(response.body)
-        print(response.headers)
-
+        if response.status_code == 202: #> 202 indicates SUCCESS
+            print("Email sent!")
     except Exception as e:
-        print("OOPS", e.message)
+        print("Oops, the email didn't send. Please try again!")
 
 
 #########################################
