@@ -35,3 +35,5 @@ Adjusting items to being priced per item or "priced-per" (like bananas)
 
 Sending an optional email receipt
 
+Tinkering with the html / adding a picture in email
+
