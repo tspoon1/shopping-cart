@@ -3,9 +3,9 @@ Shopping Cart Project for OPIM 243
 
 ## Let's get rolling
 
-For this repo! Then, clone or download to your github desktop
+Fork this repo! Then, clone or download to your github desktop.
 
-Then, navigate to the command line (or GitBash, etc) and activate a new virtual environment with conda. after you have done this, make sure that you
+Then, navigate to the command line (or GitBash, etc) and activate a new virtual environment with conda. After you have done this, make sure that you
 ```sh
 pip install requirements.txt
 ```
@@ -30,6 +30,8 @@ python shopping_cart.py
 In this project, I chose to do the extra challenges that follow:
 
 Setting the tax rate as an environment variable
+
 Adjusting items to being priced per item or "priced-per" (like bananas)
+
 Sending an optional email receipt
 
