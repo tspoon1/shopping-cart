@@ -34,6 +34,7 @@ products = [
 #print(products)
 # pprint(products)
 
+
 # TODO: write some Python code here to produce the desired output
 
 #adapted from prof-rossetti (intended for groceries exercise)
