@@ -31,15 +31,126 @@ products = [
     {"id":21, "name": "Organic Bananas","department": "produce", "aisle": "fruit", "price": 0.79, "price_per": "pound"}
 ] # based on data from Instacart: https://www.instacart.com/datasets/grocery-shopping-2017
 
-#print(products)
-# pprint(products)
 
-
-# TODO: write some Python code here to produce the desired output
-
-#adapted from prof-rossetti (intended for groceries exercise)
 def to_usd(my_price):
+    """
+    This function was adapted from prof-rossetti (intended for groceries exercise).
+
+    Parameter:
+    arg1 (float): floating point to be converted to USD
+
+    Returns:
+    string: formatted my_price to USD
+    """
     return f"${my_price:,.2f}"
+
+
+def get_nice_time():
+    """
+    This function was adapted from https://stackoverflow.com/questions/415511/how-to-get-the-current-time-in-python
+
+    Returns:
+    string: formatted the current time and date nicely!
+    """
+    return str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+
+
+def email_receipt():
+    """
+    This function will be invoked only if a user indicates they want an email reciept, and will send it to them, as well.
+    """
+    RECIP_EMAIL = user_email
+
+    SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY", "OOPS, please set env var called 'SENDGRID_API_KEY'")
+    MY_ADDRESS = os.environ.get("MY_EMAIL_ADDRESS", "OOPS, please set env var called 'MY_EMAIL_ADDRESS'")
+
+    client = SendGridAPIClient(SENDGRID_API_KEY)
+
+    checkout_list = []
+    for i in shopping_list:
+        for p in products:
+            if i == p["id"]:
+                checkout_list.append(p)
+
+    subtotal = 0.0
+    html_list_items = ""
+
+    for item, mag in zip(checkout_list, shopping_list_price_adjuster):
+        if float(mag) == 1.0:
+            html_list_items += f"<li>{item['name']} ({to_usd(item['price'])})</li>"
+            subtotal = subtotal + float(item["price"])
+
+        else:
+            html_list_items += f"<li>{item['name']} ({to_usd(float(item['price'])*float(mag))})</li>"
+            subtotal = subtotal + ( float(item["price"]) * float(mag) )
+
+    tax_rate_env = float(os.environ.get("TAX_RATE"))
+    tax = subtotal * tax_rate_env
+
+    subject = "Your Receipt from Tim's Grocery Store"
+
+    html_content = f"""
+    <img src="https://external-preview.redd.it/mqsL-kSLdDkdGNYEUfIlHO2WezJAKlWpaWn5p1ZvPyg.jpg?auto=webp&s=8b7817889bf34d3a8b2fba0de0b564b0f20a80ed">
+    <h3>Hello! This is your receipt from Tim's Grocery Store. If you didn't ask for this, please ignore the email!</h3>
+    <p>Time stamp: {get_nice_time()}</p>
+    <ul>
+        {html_list_items}
+    </ul>
+    <p>Subtotal: {to_usd(subtotal)}</p>
+    <p>Tax: {to_usd(tax)}</p>
+    <h4>Total: {to_usd(subtotal + tax)}</h4>
+    """
+
+    message = Mail(from_email=MY_ADDRESS, to_emails=RECIP_EMAIL, subject=subject, html_content=html_content)
+
+    try:
+        response = client.send(message)
+        if response.status_code == 202: #> 202 indicates SUCCESS
+            print("Email sent!")
+    except Exception as e:
+        print("Oops, the email didn't send. Please try again!")
+
+
+def print_receipt():
+    """
+    This function will print a reciept below if they do not want it emailed to them.
+    """
+
+    print("-------------------------------------------")
+    print("Tim's Grocery Store")
+    print("WWW.TimsGroceryStore.COM")
+    print("-------------------------------------------")
+    print("CHECKOUT AT: " + get_nice_time())
+    print("-------------------------------------------")
+    print("SELECTED PRODUCTS:")
+
+    checkout_list = []
+    for i in shopping_list:
+        for p in products:
+            if i == p["id"]:
+                checkout_list.append(p)
+
+    subtotal = 0.0
+    for item, mag in zip(checkout_list, shopping_list_price_adjuster):
+        if float(mag) == 1.0:
+            print(" ... " + item["name"] + " (" + to_usd(item["price"]) + ")")
+            subtotal = subtotal + float(item["price"])
+        else:
+            print(" ... " + item["name"] + " (" + to_usd(float(item["price"])*float(mag)) + ")")
+            subtotal = subtotal + ( float(item["price"]) * float(mag) )
+
+    tax_rate_env = float(os.environ.get("TAX_RATE"))
+    tax = subtotal * tax_rate_env
+
+    print("-------------------------------------------")
+    print("SUBTOTAL: " + to_usd(subtotal))
+    print("TAX: " + to_usd(tax))
+    print("TOTAL: " + to_usd(subtotal + tax))
+    print("-------------------------------------------")
+    print("THANKS, SEE YOU AGAIN SOON!")
+    print("-------------------------------------------")
+
+
 
 #####################################################################
 #  Initial message to the user  #
@@ -111,98 +222,6 @@ user_email = input("If you would like it via email, enter your email. Otherwise,
 
 #if there is an @ sign in the input, I am going to assume they entered a valid email address
 if "@" in user_email:
-    
-    #####################################
-    RECIP_EMAIL = user_email
-
-    SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY", "OOPS, please set env var called 'SENDGRID_API_KEY'")
-    MY_ADDRESS = os.environ.get("MY_EMAIL_ADDRESS", "OOPS, please set env var called 'MY_EMAIL_ADDRESS'")
-
-    client = SendGridAPIClient(SENDGRID_API_KEY)
-
-    checkout_list = []
-    for i in shopping_list:
-        for p in products:
-            if i == p["id"]:
-                checkout_list.append(p)
-
-    subtotal = 0.0
-    html_list_items = ""
-
-    for item, mag in zip(checkout_list, shopping_list_price_adjuster):
-        if float(mag) == 1.0:
-            html_list_items += f"<li>{item['name']} ({to_usd(item['price'])})</li>"
-            subtotal = subtotal + float(item["price"])
-
-        else:
-            html_list_items += f"<li>{item['name']} ({to_usd(float(item['price'])*float(mag))})</li>"
-            subtotal = subtotal + ( float(item["price"]) * float(mag) )
-
-    tax_rate_env = float(os.environ.get("TAX_RATE"))
-    tax = subtotal * tax_rate_env
-
-    subject = "Your Receipt from Tim's Grocery Store"
-
-    html_content = f"""
-    <img src="https://external-preview.redd.it/mqsL-kSLdDkdGNYEUfIlHO2WezJAKlWpaWn5p1ZvPyg.jpg?auto=webp&s=8b7817889bf34d3a8b2fba0de0b564b0f20a80ed">
-    <h3>Hello! This is your receipt from Tim's Grocery Store. If you didn't ask for this, please ignore the email!</h3>
-    <p>Time stamp: {str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))}</p>
-    <ul>
-        {html_list_items}
-    </ul>
-    <p>Subtotal: {to_usd(subtotal)}</p>
-    <p>Tax: {to_usd(tax)}</p>
-    <h4>Total: {to_usd(subtotal + tax)}</h4>
-    """
-
-    message = Mail(from_email=MY_ADDRESS, to_emails=RECIP_EMAIL, subject=subject, html_content=html_content)
-
-    try:
-        response = client.send(message)
-        if response.status_code == 202: #> 202 indicates SUCCESS
-            print("Email sent!")
-    except Exception as e:
-        print("Oops, the email didn't send. Please try again!")
-
-
-#########################################
+    email_receipt()
 else:
-
-    ####### Generating reciept output #######
-
-    # line 90 datetime formatting adapted from
-    # https://stackoverflow.com/questions/415511/how-to-get-the-current-time-in-python
-
-    print("-------------------------------------------")
-    print("Tim's Grocery Store")
-    print("WWW.TimsGroceryStore.COM")
-    print("-------------------------------------------")
-    print("CHECKOUT AT: " + str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
-    print("-------------------------------------------")
-    print("SELECTED PRODUCTS:")
-
-    checkout_list = []
-    for i in shopping_list:
-        for p in products:
-            if i == p["id"]:
-                checkout_list.append(p)
-
-    subtotal = 0.0
-    for item, mag in zip(checkout_list, shopping_list_price_adjuster):
-        if float(mag) == 1.0:
-            print(" ... " + item["name"] + " (" + to_usd(item["price"]) + ")")
-            subtotal = subtotal + float(item["price"])
-        else:
-            print(" ... " + item["name"] + " (" + to_usd(float(item["price"])*float(mag)) + ")")
-            subtotal = subtotal + ( float(item["price"]) * float(mag) )
-
-    tax_rate_env = float(os.environ.get("TAX_RATE"))
-    tax = subtotal * tax_rate_env
-
-    print("-------------------------------------------")
-    print("SUBTOTAL: " + to_usd(subtotal))
-    print("TAX: " + to_usd(tax))
-    print("TOTAL: " + to_usd(subtotal + tax))
-    print("-------------------------------------------")
-    print("THANKS, SEE YOU AGAIN SOON!")
-    print("-------------------------------------------")
+    print_receipt()
