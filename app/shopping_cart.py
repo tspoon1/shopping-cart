@@ -150,78 +150,78 @@ def print_receipt():
     print("THANKS, SEE YOU AGAIN SOON!")
     print("-------------------------------------------")
 
+if __name__ == "__main__":
 
-
-#####################################################################
-#  Initial message to the user  #
-#####################################################################
-
-print()
-print("Hello! Welcome to Tim's Grocery Store!")
-print()
-print("-------------------------------------------")
-print("The following items are available for purchase to today:")
-print("-------------------------------------------")
-
-shopping_list = []
-shopping_list_price_adjuster = []
-valid_ids = []
-
-for p in products:
-
-    #printing each product for each user to see
-    print(" + " + str(p["id"]) + " " + p["name"] + " (" + to_usd(p["price"]) + ")")
-
-    #gathering the vaid id values to use this for loop efficiently
-    valid_ids.append(int(p["id"]))
-
-print()
-user_input = "" #using in order to not not copmare ints to strings when casting later on
-
-
-####### Will execute until the user has inputted 'DONE' #######
-print("Please type 'DONE' when you are ready to checkout!")
-item_magnitude = 0
-
-while user_input.upper() != "DONE":
+    #####################################################################
+    #  Initial message to the user  #
+    #####################################################################
     
-    item_id = input("Please enter the product identifier number that you would like to purchase today: ")
-
-    #will keep running until user enters valid id or DONE
-    if item_id.upper() != "DONE":
-        while int(item_id) not in valid_ids:
-            item_id = input("I'm sorry! I don't think that product id is valid. Could you please try again? ")
-            if item_id.upper() == "DONE":
-                break
-
-    #if the user entered DONE following a wrong id, this would break the loop
-    if item_id.upper() != "DONE":
-        shopping_list.append(int(item_id))
-
-        #assigning magnitude to items
-        for p in products:
-            if int(item_id) == p["id"]:
-                if p["price_per"] == "pound":
-                    item_magnitude = input("Please specify the number of pounds: ")
-                else:
-                    item_magnitude = 1
-                break
+    print()
+    print("Hello! Welcome to Tim's Grocery Store!")
+    print()
+    print("-------------------------------------------")
+    print("The following items are available for purchase to today:")
+    print("-------------------------------------------")
+    
+    shopping_list = []
+    shopping_list_price_adjuster = []
+    valid_ids = []
+    
+    for p in products:
+    
+        #printing each product for each user to see
+        print(" + " + str(p["id"]) + " " + p["name"] + " (" + to_usd(p["price"]) + ")")
+    
+        #gathering the vaid id values to use this for loop efficiently
+        valid_ids.append(int(p["id"]))
+    
+    print()
+    user_input = "" #using in order to not not copmare ints to strings when casting later on
+    
+    
+    ####### Will execute until the user has inputted 'DONE' #######
+    print("Please type 'DONE' when you are ready to checkout!")
+    item_magnitude = 0
+    
+    while user_input.upper() != "DONE":
         
-        shopping_list_price_adjuster.append(float(item_magnitude))
-
-
-
-    user_input = item_id
-
-
-print("-------------------------------------------")
-print("Ready to check you out!")
-print("Would you like your reciept via email or printed below?")
-
-user_email = input("If you would like it via email, enter your email. Otherwise, press anything to continue! ")
-
-#if there is an @ sign in the input, I am going to assume they entered a valid email address
-if "@" in user_email:
-    email_receipt()
-else:
-    print_receipt()
+        item_id = input("Please enter the product identifier number that you would like to purchase today: ")
+    
+        #will keep running until user enters valid id or DONE
+        if item_id.upper() != "DONE":
+            while int(item_id) not in valid_ids:
+                item_id = input("I'm sorry! I don't think that product id is valid. Could you please try again? ")
+                if item_id.upper() == "DONE":
+                    break
+                
+        #if the user entered DONE following a wrong id, this would break the loop
+        if item_id.upper() != "DONE":
+            shopping_list.append(int(item_id))
+    
+            #assigning magnitude to items
+            for p in products:
+                if int(item_id) == p["id"]:
+                    if p["price_per"] == "pound":
+                        item_magnitude = input("Please specify the number of pounds: ")
+                    else:
+                        item_magnitude = 1
+                    break
+                
+            shopping_list_price_adjuster.append(float(item_magnitude))
+    
+    
+    
+        user_input = item_id
+    
+    
+    print("-------------------------------------------")
+    print("Ready to check you out!")
+    print("Would you like your reciept via email or printed below?")
+    
+    user_email = input("If you would like it via email, enter your email. Otherwise, press anything to continue! ")
+    
+    #if there is an @ sign in the input, I am going to assume they entered a valid email address
+    if "@" in user_email:
+        email_receipt()
+    else:
+        print_receipt()
